@@ -1,8 +1,7 @@
-import 'dart:js_util';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_music_player/screens/playlist_screen.dart';
+import 'package:flutter_music_player/screens/song_screen.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'screens/home_screen.dart';
 
 void main() {
@@ -18,14 +17,16 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Music Player',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-
+        textTheme: Theme.of(context).textTheme.apply(
+          bodyColor: Colors.white,
+          displayColor: Colors.white,
+        )
       ),
       home: const HomeScreen(),
       getPages: [
-        GetPage(name: '/', page: () => const HomeScreen())
-        GetPage(name: '/', page: () => const )
-        GetPage(name: '/', page: page)
+        GetPage(name: '/', page: () => const HomeScreen()),
+        GetPage(name: '/song', page: () => const SongScreen()),
+        GetPage(name: '/playlist', page: ()=> const PlaylistScreen())
       ],
     );
   }
