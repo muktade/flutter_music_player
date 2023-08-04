@@ -48,13 +48,20 @@ class HomeScreen extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         itemCount: songs.length,
                         itemBuilder: (context, index) {
-                          return TrendingMusicBox(song: songs[index]);
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                                left: 10.0,
+                                right: 10.0,
+                                bottom: 10.0
+                            ),
+                            child: TrendingMusicBox(song: songs[index]),
+                          );
                         },
                       ),
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),
