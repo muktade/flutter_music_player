@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_music_player/models/playlist_model.dart';
 import 'package:flutter_music_player/models/song_model.dart';
 import 'package:flutter_music_player/widgets/widgets.dart';
 
@@ -8,6 +9,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Song> songs = Song.songs;
+    List<Playlist> playlists = Playlist.playlists;
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -22,49 +24,78 @@ class HomeScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: const _CustomAppBar(),
-        bottomNavigationBar: _CustomBottomNavBar(),
+        bottomNavigationBar: const _CustomBottomNavBar(),
         body: SingleChildScrollView(
           child: Column(
             children: [
               const _DiscoverMusic(),
+              TrandingMusic(songs: songs),
               Padding(
-                padding: const EdgeInsets.only(
-                  left: 20.0,
-                  top: 20.0,
-                  bottom: 20.0,
-                ),
+                padding: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(right: 20.0),
-                      child: SelectionHeader(title: 'Trending Music'),
-                    ),
-                    const SizedBox(
-                      height: 20.0,
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.27,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: songs.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10.0,
-                                right: 10.0,
-                                bottom: 10.0
-                            ),
-                            child: TrendingMusicBox(song: songs[index]),
-                          );
-                        },
-                      ),
+                    const SelectionHeader(title: 'Playlists'),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: playlists.length,
+                      padding: const EdgeInsets.only(top: 20),
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: ((context, index) {
+                        return PlaylistCard(playlist: playlists[index]);
+                      }),
                     ),
                   ],
                 ),
-              ),
+              )
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+
+class TrandingMusic extends StatelessWidget {
+  const TrandingMusic({
+    super.key,
+    required this.songs,
+  });
+
+  final List<Song> songs;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 20.0,
+        top: 20.0,
+        bottom: 20.0,
+      ),
+      child: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(right: 20.0),
+            child: SelectionHeader(title: 'Trending Music'),
+          ),
+          const SizedBox(
+            height: 20.0,
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.27,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: songs.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(
+                      left: 10.0, right: 10.0, bottom: 10.0),
+                  child: TrendingMusicBox(song: songs[index]),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
