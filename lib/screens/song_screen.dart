@@ -3,6 +3,9 @@ import 'package:flutter_music_player/models/song_model.dart';
 import 'package:flutter_music_player/widgets/seekbar.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart' as rxdart;
+import 'package:get/get.dart';
+
+import '../widgets/player_buttons.dart';
 
 class SongScreen extends StatefulWidget {
   const SongScreen({Key? key}) : super(key: key);
@@ -13,7 +16,7 @@ class SongScreen extends StatefulWidget {
 
 class _SongScreenState extends State<SongScreen> {
   AudioPlayer audioPlayer = AudioPlayer();
-  Song song = Song.songs[0];
+  Song song = Get.arguments ?? Song.songs[0];
 
   @override
   initState() {
@@ -25,6 +28,9 @@ class _SongScreenState extends State<SongScreen> {
           AudioSource.uri(
             Uri.parse('asset:///${song.url}'),
           ),
+          // AudioSource.uri(
+          //   Uri.parse('asset:///${Song.songs[1].url}'),
+          // ),
         ],
       ),
     );
@@ -63,6 +69,7 @@ class _SongScreenState extends State<SongScreen> {
           ),
           const _BackgroundFilter(),
           _MusicPlayer(
+            song: song,
               seekBarDataStream: _seekBarDataStream, audioPlayer: audioPlayer),
         ],
       ),
@@ -74,87 +81,55 @@ class _MusicPlayer extends StatelessWidget {
   const _MusicPlayer({
     super.key,
     required Stream<SeekBarData> seekBarDataStream,
+    required this.song,
     required this.audioPlayer,
   }) : _seekBarDataStream = seekBarDataStream;
 
   final Stream<SeekBarData> _seekBarDataStream;
   final AudioPlayer audioPlayer;
+  final Song song;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 20.0,
-        vertical: 40.0,
+        vertical: 50.0,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            song.title,
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10.0,),
+          Text(
+            song.description,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 30.0,),
           StreamBuilder<SeekBarData>(
             stream: _seekBarDataStream,
             builder: (context, snapshot) {
               final positionData = snapshot.data;
+              var changePosition =
+                  positionData!.duration - positionData!.position;
               return SeekBar(
                 position: positionData?.position ?? Duration.zero,
                 duration: positionData?.duration ?? Duration.zero,
+                // duration: changePosition,
                 onChangeEnd: audioPlayer.seek,
               );
             },
           ),
-          Row(
-            children: [
-              StreamBuilder(
-                stream: audioPlayer.playerStateStream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    final playerState = snapshot.data;
-                    final processingState =
-                        (playerState! as PlayerState).processingState;
-                    if (processingState == ProcessingState.loading ||
-                        processingState == ProcessingState.buffering) {
-                      return Container(
-                        width: 64.0,
-                        height: 64.0,
-                        margin: const EdgeInsets.all(10.0),
-                        child: const CircularProgressIndicator(),
-                      );
-                    } else if (!audioPlayer.playing) {
-                      return IconButton(
-                        onPressed: audioPlayer.play,
-                        icon: const Icon(
-                          Icons.play_circle,
-                          color: Colors.white,
-
-                        ),
-                        iconSize: 75.0,
-                      );
-                    } else if (processingState != ProcessingState.completed) {
-                      return IconButton(
-                        icon: const Icon(
-                          Icons.pause_circle,
-                          color: Colors.white,
-                        ),
-                        iconSize: 75.0,
-                        onPressed: audioPlayer.pause,
-                      );
-                    }
-                    return IconButton(
-                      icon: const Icon(
-                        Icons.replay_circle_filled_outlined,
-                        color: Colors.white,
-                      ),
-                      iconSize: 75.0,
-                      onPressed: () => audioPlayer.seek(Duration.zero,
-                          index: audioPlayer.effectiveIndices!.first),
-                    );
-                  } else {
-                    return const CircularProgressIndicator();
-                  }
-                },
-              ),
-            ],
-          )
+          PlayerButtons(audioPlayer: audioPlayer)
         ],
       ),
     );

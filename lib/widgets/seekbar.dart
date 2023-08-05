@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SeekBarData {
@@ -38,7 +37,7 @@ class _SeekBarState extends State<SeekBar> {
     } else {
       String minutes = duration.inMinutes.toString().padLeft(2, '0');
       String seconds =
-          duration.inMilliseconds.remainder(60).toString().padLeft(2, '0');
+          duration.inSeconds.remainder(60).toString().padLeft(2, '0');
       res = '$minutes:$seconds';
     }
     return res;
@@ -67,10 +66,10 @@ class _SeekBarState extends State<SeekBar> {
             ),
             child: Slider(
               min: 0.0,
-              max: widget.duration.inMicroseconds.toDouble(),
+              max: widget.duration.inMilliseconds.toDouble(),
               value: min(
-                _dragValue ?? widget.position.inMicroseconds.toDouble(),
-                widget.position.inMicroseconds.toDouble(),
+                _dragValue ?? widget.position.inMilliseconds.toDouble(),
+                widget.position.inMilliseconds.toDouble(),
               ),
               onChanged: (value) {
                 setState(() {
@@ -98,7 +97,7 @@ class _SeekBarState extends State<SeekBar> {
           ),
         ),
         Text(
-          _formatDuration(widget.duration),
+          _formatDuration(widget.duration - widget.position),
         ),
       ],
     );
