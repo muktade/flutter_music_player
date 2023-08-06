@@ -65,6 +65,9 @@ class _SongScreenState extends State<SongScreen> {
         children: [
           Image.asset(
             song.coverUrl,
+            width: double.infinity,
+            // width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.7,
             fit: BoxFit.cover,
           ),
           const _BackgroundFilter(),
