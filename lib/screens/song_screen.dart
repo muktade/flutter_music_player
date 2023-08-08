@@ -72,8 +72,9 @@ class _SongScreenState extends State<SongScreen> {
           ),
           const _BackgroundFilter(),
           _MusicPlayer(
-            song: song,
-              seekBarDataStream: _seekBarDataStream, audioPlayer: audioPlayer),
+              song: song,
+              seekBarDataStream: _seekBarDataStream,
+              audioPlayer: audioPlayer),
         ],
       ),
     );
@@ -106,24 +107,28 @@ class _MusicPlayer extends StatelessWidget {
           Text(
             song.title,
             style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
           ),
-          const SizedBox(height: 10.0,),
+          const SizedBox(
+            height: 10.0,
+          ),
           Text(
             song.description,
             style: Theme.of(context).textTheme.bodySmall!.copyWith(
-              color: Colors.white,
-            ),
+                  color: Colors.white,
+                ),
           ),
-          const SizedBox(height: 30.0,),
+          const SizedBox(
+            height: 30.0,
+          ),
           StreamBuilder<SeekBarData>(
             stream: _seekBarDataStream,
             builder: (context, snapshot) {
               final positionData = snapshot.data;
               var changePosition =
-                  positionData!.duration - positionData!.position;
+                  positionData!.duration - positionData.position;
               return SeekBar(
                 position: positionData?.position ?? Duration.zero,
                 duration: positionData?.duration ?? Duration.zero,
